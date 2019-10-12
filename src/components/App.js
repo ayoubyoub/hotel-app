@@ -29,8 +29,24 @@ class App extends React.Component {
 constructor(props) {
   super(props);
   this.state = {
-    modalIsOpen: false
+    modalIsOpen: false,
+    total: 0,
+    nom: '',
+    prenom: '',
+    email: '',
+    adresse: '',
+    modalIsOpenConf: false,
   };
+}
+
+UNSAFE_componentWillReceiveProps(nextProps){
+  let sum = 0;
+  if(this.props.nuits !== nextProps.nuits){
+    map(nextProps.nuits, (nuit) =>{
+      sum = sum + nuit.hotel.price;
+    });
+    this.setState({total: sum})
+  }
 }
 
 openModal = () =>{
@@ -39,6 +55,19 @@ openModal = () =>{
 
 closeModal = () => {
   this.setState({modalIsOpen: false});
+}
+
+openModalConf = () =>{
+  this.setState({modalIsOpenConf: true});
+}
+
+closeModalConf = () =>{
+  this.setState({modalIsOpenConf: false,
+                  nom:'',
+                  prenom: '',
+                  email: '',
+                  adresse: ''});
+  this.props.resetNuit();
 }
 
 getImg = (hotel) => {
@@ -69,9 +98,41 @@ sendNuit = (hotel) => {
   this.props.createNuit(nuit);
 }
 
+handleChange = (event) => {
+  this.setState({[event.target.name]: event.target.value});
+}
+
+handleSubmit = (event) => {
+  event.preventDefault();
+  this.closeModal();
+  this.openModalConf();
+}
+
+getShowNuits = (nuits) => {
+  const {total} = this.state;
+return <div>
+  {map(nuits, (nuit, i) => (
+  <div className="hotel-view-min__item" key={i}>
+  <div>
+    <img src={this.getImg(nuit.hotel)} alt={nuit.hotel.img} className="hotel-view-min__item_img"/>
+  </div>
+  <div className="hotel-view-min__item__price">
+    <b>{nuit.hotel.price}&euro;</b>
+    <br/>
+    <span className="hotel-view-min__item__price-sm">prix/nuit</span>
+  </div>
+</div>
+))}
+  <div className="hotel-view-min__item__total">
+    <span>TOTAL</span> {total}&euro;
+  </div>
+</div>
+
+}
+
 render() {
   const {hotels, nuits} = this.props;
-  let total = 0;
+  const {total} = this.state;
   return (
       <div className="container">
         <div className="head">
@@ -119,30 +180,14 @@ render() {
                         <b>PANIER</b>
                         </div>
                         {/** NUITS*/}
-                        
-                        {map(nuits, (nuit, i) => (
-                          <div className="hotel-view-min__item" key={i}>
-                          <div className="calcMe">{total = total + nuit.hotel.price} </div>
-                          <div>
-                            <img src={this.getImg(nuit.hotel)} alt={nuit.hotel.img} className="hotel-view-min__item_img"/>
-                          </div>
-                          <div className="hotel-view-min__item__price">
-                            <b>{nuit.hotel.price}&euro;</b>
-                            <br/>
-                            <span className="hotel-view-min__item__price-sm">prix/nuit</span>
-                          </div>
-                        </div>
-                        ))}
-                        <div className="hotel-view-min__item__total">
-                           <span>TOTAL</span> {total}&euro;
-                        </div>
+                        {this.getShowNuits(nuits)}
                         <div className={total>0 ? "" : "calcMe" }>
                         <button className="valider" onClick={this.openModal}>Reserver</button>
                         </div>
                     </div>
                 </nav>
             </div>
-            {/** MODAL */}
+            {/** MODAL INFO */}
             <Modal
               isOpen={this.state.modalIsOpen}
               onRequestClose={this.closeModal}
@@ -150,16 +195,76 @@ render() {
               contentLabel="Informations personnelles"
             >
               <h2 ref={subtitle => this.subtitle = subtitle}>Informations personnelles</h2>
-              <br/><br/>
-              <form>
-                Email: <input /> (email obligatoire)<br/>
-                Nom: <input /><br/>
-                Prénom: <input /><br/>
-                Adresse: <input /><br/>
+              <br/>
+              <form onSubmit={this.handleSubmit}>
+                <table>
+                <tbody>
+                  <tr>
+                    <td>Email: </td>
+                    <td><input type="email" name="email" required 
+                    value={this.state.email} onChange={this.handleChange} /> <span className="obligatoire">(email obligatoire)</span></td>
+                  </tr>
+                  <tr>
+                    <td>Nom: </td>
+                    <td><input type="text" name="nom" value={this.state.nom} onChange={this.handleChange} /></td>
+                  </tr>
+                  <tr>
+                    <td>Prénom: </td>
+                    <td><input type="text" name="prenom" value={this.state.prenom} onChange={this.handleChange} /></td>
+                  </tr>
+                  <tr>
+                    <td>Adresse: </td>
+                    <td><textarea name="adresse" value={this.state.adresse} onChange={this.handleChange} /></td>
+                  </tr>
+                  </tbody>
+                </table>
+                <input className="valider" type="submit" value="Confirmer" />
+                <button className="valider" onClick={this.closeModal}>Annuler</button>
               </form>
-              <br/><br/>
-              <button onClick={this.closeModal}>Valider</button>
-              <button onClick={this.closeModal}>Annuler</button>
+              <br/>
+            </Modal>
+            {/** MODAL CONFIRMATION */}
+            <Modal
+              isOpen={this.state.modalIsOpenConf}
+              onRequestClose={this.closeModalConf}
+              style={customStyles}
+              contentLabel="récapitulatif de la commande"
+            >
+              <h2 ref={subtitle => this.subtitle = subtitle}>Récapitulatif de la commande</h2>
+              <br/>
+                <b>
+                  Merci pour votre confirmation, veuillez trouver ci-joint le récapitulatif de votre reservation.
+                </b><br/><br/>
+                <table>
+                <tbody>
+                  <tr>
+                    <td>Email: </td>
+                    <td>{this.state.email}</td>
+                  </tr>
+                  <tr>
+                    <td>Nom: </td>
+                    <td>{this.state.nom} </td>
+                  </tr>
+                  <tr>
+                    <td>Prénom: </td>
+                    <td>{this.state.prenom}</td>
+                  </tr>
+                  <tr>
+                    <td>Adresse: </td>
+                    <td>{this.state.adresse}</td>
+                  </tr>
+                  </tbody>
+                </table>
+                <br/>
+                <b>Vous avez réservé :</b>
+                <br/>
+                {/** NUITS*/}
+                {this.getShowNuits(nuits)}
+                <br/>
+                <center>
+                <button className="valider" onClick={this.closeModalConf}>Quitter</button>
+                </center>
+              <br/>
             </Modal>
         </div>
   );
@@ -174,7 +279,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    createNuit: nuit => dispatch(nuitAction.createNuit(nuit))
+    createNuit: nuit => dispatch(nuitAction.createNuit(nuit)),
+    resetNuit: () => dispatch(nuitAction.resetNuit())
   }
 };
 

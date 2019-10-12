@@ -9,6 +9,8 @@ export default (state = [], action) => {
         ...state,
         Object.assign({}, action.nuit)
       ];
+      case actionTypes.RESET_NUITS:
+          return [];
       default:
             return state;
     }

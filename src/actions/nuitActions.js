@@ -8,3 +8,9 @@ export const createNuit = (nuit) => {
       nuit: nuit
     }
   };
+
+  export const resetNuit = () => {
+    return {
+      type: actionTypes.RESET_NUITS
+    }
+  };
