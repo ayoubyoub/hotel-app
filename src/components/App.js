@@ -209,7 +209,7 @@ render() {
                     <td><input type="text" name="nom" value={this.state.nom} onChange={this.handleChange} /></td>
                   </tr>
                   <tr>
-                    <td>Prénom: </td>
+                    <td>Pr&eacute;nom: </td>
                     <td><input type="text" name="prenom" value={this.state.prenom} onChange={this.handleChange} /></td>
                   </tr>
                   <tr>
@@ -228,12 +228,12 @@ render() {
               isOpen={this.state.modalIsOpenConf}
               onRequestClose={this.closeModalConf}
               style={customStyles}
-              contentLabel="récapitulatif de la commande"
+              contentLabel="recapitulatif de la commande"
             >
-              <h2 ref={subtitle => this.subtitle = subtitle}>Récapitulatif de la commande</h2>
+              <h2 ref={subtitle => this.subtitle = subtitle}>R&eacute;capitulatif de la commande</h2>
               <br/>
                 <b>
-                  Merci pour votre confirmation, veuillez trouver ci-joint le récapitulatif de votre reservation.
+                  Merci pour votre confirmation, veuillez trouver ci-joint le r&eacute;capitulatif de votre reservation.
                 </b><br/><br/>
                 <table>
                 <tbody>
@@ -246,7 +246,7 @@ render() {
                     <td>{this.state.nom} </td>
                   </tr>
                   <tr>
-                    <td>Prénom: </td>
+                    <td>Pr&eacute;nom: </td>
                     <td>{this.state.prenom}</td>
                   </tr>
                   <tr>
@@ -256,7 +256,7 @@ render() {
                   </tbody>
                 </table>
                 <br/>
-                <b>Vous avez réservé :</b>
+                <b>Vous avez r&eacute;serv&eacute; :</b>
                 <br/>
                 {/** NUITS*/}
                 {this.getShowNuits(nuits)}
