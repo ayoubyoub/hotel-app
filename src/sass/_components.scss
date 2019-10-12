@@ -26,6 +26,23 @@
 
 }
 
+.calcMe{
+    display: none;
+}
+
+.valider{
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    display: inline-block;
+    border-radius: 10rem;
+    -webkit-transition: all .2s;
+    transition: all .2s;
+    position: relative;
+    cursor: pointer;
+    margin-top: .5rem;
+    margin-left: 4.5rem;
+}
 
 ////////////////////////////////////////
 // USER NAVIGATION
